@@ -11,7 +11,7 @@
 #include <preempt.h>
 
 void svc_handler(struct pt_regs *regs);
-void segv_handler();
+void segv_handler(struct pt_regs *regs);
 
 void irq_handler(struct pt_regs *regs) {
     if (*CORE0_TIMER_IRQ_SRC & 2) {
@@ -53,7 +53,7 @@ void sync_handler(struct pt_regs *regs) {
 
     case ESR_ELx_EC_DABT_LOW:
         /* Userland data abort exception */
-        segv_handler();
+        segv_handler(regs);
         break;
 
     case ESR_ELx_EC_IABT_LOW:

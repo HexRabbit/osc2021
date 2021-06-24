@@ -45,6 +45,23 @@ void test2() {
     close(a);
 }
 
+void test3(void) {
+  int cnt = 0;
+  if(fork() == 0) {
+    fork();
+    fork();
+    while(cnt < 10) {
+      printf("pid: %d, sp: 0x%llx cnt: %d\n", getpid(), &cnt, cnt++); // address should be the same, but the cnt should be increased indepndently
+      int i = 1000000;
+      while(i--);
+    }
+  } else {
+    int* a = 0x0; // a non-mapped address.
+    printf("%d\n", *a); // trigger simple page fault.
+    printf("Should not be printed\n");
+  }
+}
+
 void cat(const char *name) {
     char buf[0x50];
     int fd = open(name, 0);
@@ -184,6 +201,9 @@ int main() {
         }
         else if (!strcmp(buf, "test2")) {
             test2();
+        }
+        else if (!strcmp(buf, "test3")) {
+            test3();
         }
     }
 }
